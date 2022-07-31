@@ -1,6 +1,7 @@
 require('dotenv').config();
 
 const express       = require('express'),
+    cors            = require('cors'),
     mongoose        = require('mongoose'),
     morgan          = require('morgan'),
     app             = express(),
@@ -19,6 +20,7 @@ mongoose.connect(ATLASURI, (err) => {
     console.error(err);
 });
 
+app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json());
 
