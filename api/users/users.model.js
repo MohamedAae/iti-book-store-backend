@@ -8,6 +8,7 @@ const users = new mongoose.Schema({
   history: { type: mongoose.Schema.Types.ObjectId, ref: "Products" },
   reviews: { type: mongoose.Schema.Types.ObjectId, ref: "Reviews" },
   favourit: { type: mongoose.Schema.Types.ObjectId, ref: "Products" },
+  token: { type: String },
 });
 
 let model = mongoose.model("users", users);

@@ -1,11 +1,12 @@
-const express = require("express"),
-  bcrypt = require("bcrypt"),
-  saltRounds = +process.env.SALTROUNDS,
+const saltRounds = +process.env.SALTROUNDS,
+  express = require("express"),
   router = express.Router(),
-  User = require("./users.model"),
-  helpers = require("../../helpers/api.js");
+  bcrypt = require("bcrypt"),
+  helpers = require("../../helpers/api.js"),
+  jwt = require("../../auth/token"),
+  User = require("./users.model");
 
-router.get("/", async (req, res, next) => {
+router.get("/", jwt.auth, async (req, res, next) => {
   let user;
   try {
     user = await User.find();
@@ -19,13 +20,15 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-router.post("/regester", async (req, res, next) => {
+router.post("/register", async (req, res, next) => {
   const data = req.body;
   try {
     const hashedPassword = await hashPassword(data.password);
     data.password = hashedPassword;
     const user = new User(data);
     const saved = await user.save();
+    saved.token = jwt.generateToken(saved._id);
+    console.log(saved.token);
     return res.status(201).json({
       success: true,
       code: 201,
