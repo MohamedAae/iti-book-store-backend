@@ -4,8 +4,8 @@ const axios     = require('axios'),
     parser      = new DomParser(),
     handleJSON  = require('./handle-json-file'),
     homePageUrl =  "https://www.barnesandnoble.com",
-     pages      = require("./booksUrl.json"),
-     booksJson= require("./books.json");
+     pages      = require("./booksUrl.json") || [],
+     booksJson  = require("./books.json") || [];
 
 let currentDom;
 
@@ -58,10 +58,16 @@ const getPage = async (pageUrl) => {
             image       = mapElementAttributes(
                 getElmentAttributes('pdpMainImage'),
                 "src"
-            )[0].value;
-
-        console.log(image);
-        return { name, description, rating, price, image };
+            )[0].value,
+            author       =  mapElementAttributes(
+                getElmentAttributes('author'),
+                "value"
+            )[0].value,
+            thumbnails   = currentDom.getElementsByClassName("secondary-image").map((div)=>{
+             return div.getAttribute("src")
+            });
+console.log(thumbnails)
+        return { name, description, rating, price, image ,author,thumbnails};
     } catch(err) {
         console.error(err);
     }
@@ -97,5 +103,8 @@ console.log(err.data);
 }
 })
 }
-postToApi(booksJson)
-// loopThroughPages(pages);
+
+
+// postToApi(booksJson)
+loopThroughPages(pages);
+

@@ -8,7 +8,7 @@ const Product = new mongoose.Schema({
     rating      : { type: Number, min: 0, max: 5 },
     free        : Boolean,
     price       : { type: Number },
-    imageUrl    : String,
+    image       : String,
     thumbnail   : Array,
     categoryId  : { type: mongoose.Schema.Types.ObjectId, ref: "Categories" },
     brand       : { type: mongoose.Schema.Types.ObjectId, ref: "Publishers" },
