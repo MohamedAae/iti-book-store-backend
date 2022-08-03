@@ -12,8 +12,8 @@ const express = require("express"),
   HOST = process.env.HOST,
   PORT = process.env.PORT || 5000,
   productsRouter = require("./api/products"),
-  usersRouter = require("./api/users");
-
+  usersRouter = require("./api/users"),
+  authorRouter = require("./api/authors");
 mongoose.connect(ATLASURI, (err) => {
   if (!err) return console.log(`Connected to Atlas DB.`);
   console.error(err);
@@ -25,7 +25,7 @@ app.use(express.json());
 
 app.use("/products", productsRouter);
 app.use("/users", usersRouter);
-
+app.use("/authors", authorRouter);
 app.listen(PORT, HOST, () => {
   console.log(`Server is running on port ${PORT}`);
 });
