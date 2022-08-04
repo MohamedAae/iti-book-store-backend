@@ -41,7 +41,8 @@ router.post("/register", async (req, res, next) => {
 
 router.post("/login", async (req, res, next) => {
   const data = req.body,
-    { email, password } = data;
+    { email, password } = data,
+    token = jwt.generateToken();
 
   try {
     const currentUser = await User.findOne({ email: email });
@@ -55,6 +56,8 @@ router.post("/login", async (req, res, next) => {
     if (!match) {
       return helpers.handleError("err data login", res);
     }
+
+    currentUser.token = token;
     return res.status(201).json({
       success: true,
       code: 201,

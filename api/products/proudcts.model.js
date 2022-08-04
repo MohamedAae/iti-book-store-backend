@@ -10,7 +10,7 @@ const Product = new mongoose.Schema({
     price       : { type: Number },
     image       : String,
     thumbnail   : Array,
-    categoryId  : { type: mongoose.Schema.Types.ObjectId, ref: "Categories" },
+    categoryId  : { type: mongoose.Schema.Types.ObjectId, ref: "Category" },
     brand       : { type: mongoose.Schema.Types.ObjectId, ref: "Publishers" },
     active      : Boolean,
     reviews     : { type: mongoose.Schema.Types.ObjectId, ref: "Reviews" },
