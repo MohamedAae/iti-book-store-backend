@@ -4,6 +4,7 @@ const axios     = require('axios'),
     parser      = new DomParser(),
     handleJSON  = require('./handle-json-file'),
     homePageUrl =  "https://www.barnesandnoble.com",
+    categoryUrl =["https://www.barnesandnoble.com/b/booktok/_/N-2vdn","https://www.barnesandnoble.com/b/the-best-books-of-2022-so-far/_/N-2vj7","https://www.barnesandnoble.com/b/audiobooks/_/N-2sgz","https://www.barnesandnoble.com/b/ebooks-nook/_/N-8qa"] ,
      pages      = require("./booksUrl.json") || [],
      booksJson  = require("./books.json") || [];
 
@@ -14,10 +15,19 @@ const loopThroughPages = async (pages) => {
 
     pages.map( async (page) => {
         try {
-            const book = await getPage(page);
+            // console.log(page.categoryName)
+            const postCategoryName = await postCategoryToApi(page.categoryName),
+            categoryId = postCategoryName.category._id,
+            booksUrl = page.bookUrl;
+            booksUrl.map(async (bookUrl)=>{
+                const book = await getPage(bookUrl);
             if(book){
+                book.categoryId = categoryId
                 handleJSON.add("books.json", book);
             }
+            })
+            
+        
         } catch (err) {
             console.error(err.message);
         }
@@ -27,14 +37,22 @@ const loopThroughPages = async (pages) => {
 const getAllBooks=async ()=>{
     try {
     handleJSON.createFile("booksUrl.json");
-    const homePage=await axios.get(homePageUrl);
-   currentDom     = parseHTML(homePage.data),
-    tagNames       = currentDom.getElementsByTagName("a");
-    tagNames.map((tagName)=>{
-    if(tagName.getAttribute("title")=== "view details"){
-        const bookUrl= homePageUrl+ tagName.getAttribute("href");
-            handleJSON.add("booksUrl.json",bookUrl)
-        };
+    categoryUrl.map(async (url)=>{
+        const categoryData ={"categoryName":"","bookUrl":[]},
+        page=await axios.get(url);
+   currentDom     = parseHTML(page.data);
+    // {"categoryName":"","categoryDescription":"","bookUrl":[]}
+    getAttributeByAttribute('header','role','presentation',(result)=>{ 
+        if(!categoryData.categoryName){
+            categoryData.categoryName = result.getElementsByTagName('h1')[0].textContent
+        }
+    })
+    getAttributeByAttribute('a','title','view details',(result)=>{ 
+        const targetElement= homePageUrl + result.getAttribute('href');
+        categoryData.bookUrl.push(targetElement)
+        // console.log(result)
+    })
+    handleJSON.add("booksUrl.json",categoryData)
     })
 }catch (err){
 console.log(err);
@@ -42,6 +60,16 @@ console.log(err);
 }
 
 
+const getAttributeByAttribute = (tagName,comparisonAttribute,comparisonValue,cb)=>{
+   const elements       = currentDom.getElementsByTagName(tagName);
+   elements.map((element)=>{
+    if(element.getAttribute(comparisonAttribute)=== comparisonValue){
+            cb(element)
+        };
+    })
+}
+
+// {"categoryName":"","categoryDescription":"","bookUrl":[]}
 
 
 const getPage = async (pageUrl) => {
@@ -104,7 +132,18 @@ console.log(err.data);
 })
 }
 
+const postCategoryToApi= async(categoryname)=>{
+try{
+    const res=await axios.post("http://127.0.0.1:5003/categories",{"name" : categoryname})
+    return res.data;
+}catch(err){
+console.log(err.data);
+}
+}
+
+
 
 // postToApi(booksJson)
 loopThroughPages(pages);
 
+// getAllBooks()

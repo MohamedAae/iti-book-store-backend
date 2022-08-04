@@ -1,7 +1,8 @@
 const express = require("express"),
   router = express.Router(),
   Product = require("./proudcts.model"),
-  helpers = require("../../helpers/api.js");
+  helpers = require("../../helpers/api.js"),
+  mongoose = require("mongoose");
 
 router.get("/", async (req, res, next) => {
   let products;
@@ -19,7 +20,12 @@ router.get("/", async (req, res, next) => {
 
 router.post("/", async (req, res, next) => {
   const data = req.body,
-    product = new Product(data);
+  id = mongoose.mongo.ObjectId("4eb6e7e7e9b7f4194e000001");
+  // console.log(id)
+  data.categoryId = data.categoryId;
+  console.log(data)
+   const product = new Product(data);
+
 
   try {
     const saved = await product.save();
