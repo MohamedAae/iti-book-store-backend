@@ -1,6 +1,7 @@
 const Product = require("./proudcts.model"),
   helpers = require("../../helpers/api.js"),
   mongoose = require("mongoose");
+const Offer = require("../offers/offers.model");
 
 const Controller = {
   get: async (req, res, next) => {
@@ -47,10 +48,26 @@ const Controller = {
     }
   },
 
+  edit: async (req, res, next) => {
+    const id    = req.params.id,
+        update  = req.body;
+
+    try {
+      const updated = await Product.findOneAndUpdate({_id: id}, update);
+      return res.status(201).json({
+        success : true,
+        code    : 201,
+        product : updated,
+      })
+    } catch (err) {
+      return helpers.handleError(err, res);
+    }
+  },
+
   fillter: async (req, res, next) => {
     let bestSellerBooks;
     try {
-      bestSellerBooks = await Product.find().sort({ rating: -1 }).limit(9);
+      bestSellerBooks = await Product.find().sort({ rating: -1 }).limit(9).populate('categoryId');
       return res.status(201).json({
         success: true,
         code: 201,

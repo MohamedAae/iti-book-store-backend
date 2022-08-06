@@ -135,8 +135,30 @@ const postCategoryToApi = async (categoryname) => {
     }
 }
 
+const generateDiscountRate = async () => {
+    try {
+        const res = await axios.get(`http://127.0.0.1:5003/products`),
+            books = res.data.products;
 
-postToApi(booksJson);
+        let sentRequest = 0;
+        for (let i = 0; sentRequest < 7;  i++) {
+            const book = books[i],
+                id = book._id;
+            if ( !book.discountrate ) {
+                try {
+                    const res = await axios.patch(`http://127.0.0.1:5003/products/${id}`, { discountrate: 0.8 });
+                    sentRequest++;
+                } catch (err) {
+                    console.log(err.data);
+                }
+            }
+        }
+    } catch(err) {
+        console.log(err.data);
+    }
+}
+
+// postToApi(booksJson);
 // loopThroughPages(pages);
-
 // getAllBooks()
+generateDiscountRate();
