@@ -136,7 +136,7 @@ const postCategoryToApi = async (categoryname) => {
 }
 
 
-// postToApi(booksJson);
-loopThroughPages(pages);
+postToApi(booksJson);
+// loopThroughPages(pages);
 
 // getAllBooks()
