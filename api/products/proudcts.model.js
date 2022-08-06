@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const Product = new mongoose.Schema({
   url: String,
   name: String,
-  author: { type: mongoose.Schema.Types.ObjectId, ref: "Authors" },
+  author: { type: String },
   description: String,
   rating: { type: Number, min: 0, max: 5 },
   free: Boolean,

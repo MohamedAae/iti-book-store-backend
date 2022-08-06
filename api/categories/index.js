@@ -1,8 +1,9 @@
 const express = require("express"),
   router = express.Router(),
   Category = require("./category.model"),
-  helpers = require("../../helpers/api.js");
-
+  helpers = require("../../helpers/api.js"),
+  {ObjectId} = require('mongodb');
+  
 
   router.get("/", async (req, res, next) => {
     let categories;
@@ -47,6 +48,37 @@ const express = require("express"),
         return helpers.handleError(err, res);
     }
   })
+
+  router.get("/category-products/:id",async(req,res,next)=>{
+    const id = req.params.id
+    try{
+        const category = await Category.aggregate(
+          [
+            {
+              '$match': {
+                '_id': new ObjectId(id)
+              }
+            }, {
+              '$lookup': {
+                'from': 'products', 
+                'localField': '_id', 
+                'foreignField': 'categoryId', 
+                'as': 'category'
+              }
+            }
+          ]
+        
+        )
+        return res.status(201).json({
+        success: true,
+        code: 201,
+        category: category[0].category,
+        })
+    }catch(err){
+        return helpers.handleError(err, res);
+    }
+  })
+
 
 module.exports = router;
 

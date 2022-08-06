@@ -119,7 +119,7 @@ const postToApi = (books) => {
     books.map(async (book) => {
         try {
             const req = await axios.post("http://127.0.0.1:5003/products", book)
-            return console.log(req);
+            return req.data;
         } catch (err) {
             console.log(err);
         }
