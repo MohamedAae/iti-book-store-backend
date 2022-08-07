@@ -141,12 +141,13 @@ const generateDiscountRate = async () => {
             books = res.data.products;
 
         let sentRequest = 0;
-        for (let i = 0; sentRequest < 7;  i++) {
+        for (let i = 0; sentRequest < 55;  i++) {
             const book = books[i],
                 id = book._id;
             if ( !book.discountrate ) {
                 try {
-                    const res = await axios.patch(`http://127.0.0.1:5003/products/${id}`, { discountrate: 0.8 });
+                    // const res = await axios.patch(`http://127.0.0.1:5003/products/${id}`, { discountrate: 0.8 });
+                    const res = await axios.patch(`http://127.0.0.1:5003/products/${id}`, { stock: randomInt(1, 25) } );
                     sentRequest++;
                 } catch (err) {
                     console.log(err.data);
@@ -157,6 +158,11 @@ const generateDiscountRate = async () => {
         console.log(err.data);
     }
 }
+
+const randomInt = (min, max) => {
+    return Math.floor(Math.random() * (max - min + 1) + min)
+}
+
 
 // postToApi(booksJson);
 // loopThroughPages(pages);
