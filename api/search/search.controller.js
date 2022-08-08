@@ -8,7 +8,7 @@ const Controller = {
     try {
       let result = await Product.find({
         name: { $regex: keyword, $options: "i" },
-      });
+      }).populate("categoryId");
       return res.status(201).json({
         success: true,
         code: 201,
