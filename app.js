@@ -16,7 +16,8 @@ const express = require("express"),
   authorRouter = require("./api/authors"),
   categoryRouter = require("./api/categories"),
   offersRouter = require("./api/offers"),
-  searchRouter = require("./api/search");
+  searchRouter = require("./api/search"),
+  reviewsRouter = require("./api/reviews");
 
 mongoose.connect(ATLASURI, (err) => {
   if (!err) return console.log(`Connected to Atlas DB.`);
@@ -33,6 +34,7 @@ app.use("/users", usersRouter);
 app.use("/categories", categoryRouter);
 app.use("/offers", offersRouter);
 app.use("/search", searchRouter);
+app.use("/reviews", reviewsRouter);
 
 app.listen(PORT, HOST, () => {
   console.log(`Server is running on port ${PORT}`);
