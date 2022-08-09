@@ -4,20 +4,42 @@ const Product = require("../products/proudcts.model"),
 
 const Controller = {
   search: async (req, res, next) => {
-    const keyword = req.params.keyword;
+    const keyword = req.params.keyword,
+        page      = checkQueryValue(req, 'page') - 1,
+        pageSize  = checkQueryValue(req, 'pageSize'),
+        skip      = page * pageSize;
+
     try {
-      let result = await Product.find({
+      const result = await Product
+          .find({
+            name: { $regex: keyword, $options: "i" },
+          })
+          .limit(pageSize)
+          .skip(skip)
+          .populate("categoryId");
+
+      const totalResults = await Product.count({
         name: { $regex: keyword, $options: "i" },
-      }).populate("categoryId");
+      });
+
       return res.status(201).json({
         success: true,
         code: 201,
         searchResult: result,
+        totalResults,
       });
     } catch (err) {
       return helpers.handleError(err, res);
     }
   },
 };
+
+const checkQueryValue = (req, key) => {
+  if ( req.query[key] ) {
+    return req.query[key];
+  }
+
+  return "";
+}
 
 module.exports = Controller;
