@@ -1,21 +1,31 @@
 const Product = require("./proudcts.model"),
   helpers = require("../../helpers/api.js"),
   mongoose = require("mongoose");
-const Offer = require("../offers/offers.model");
+  Offer = require("../offers/offers.model");
 
 const Controller = {
   get: async (req, res, next) => {
-    let products;
-    const limit = req.query.pageSize,
-      page = req.query.page - 1,
-      skip = limit * page;
-    console.log(limit);
+    let products, count;
+
+    const options       = {},
+        categoryId      = req.query.categoryId ? options["categoryId"] = { $in: req.query.categoryId } : false,
+        discountRate    = Number(req.query.dr) ? options["discountrate"] = req.query.dr/100 : false,
+        filterBase      = req.query.filter ? req.query.filter : "",
+        filterDirection = req.query.dir ? req.query.dir : "",
+        filterOptions   = filterBase ? { [filterBase]: filterDirection } : {},
+        limit           = req.query.pageSize,
+        page            = req.query.page - 1,
+        skip            = limit * page;
+
+    console.log(options);
     try {
-      products = await Product.find().limit(limit).skip(skip);
+      products = await Product.find(options).sort(filterOptions).limit(limit).skip(skip);
+      count = await Product.count(options);
       return res.status(201).json({
         success: true,
         code: 201,
         products: products,
+        count: count,
       });
     } catch (err) {
       return helpers.handleError(err, res);
