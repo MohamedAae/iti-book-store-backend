@@ -1,6 +1,7 @@
 const Product = require("./proudcts.model"),
   helpers = require("../../helpers/api.js"),
   mongoose = require("mongoose");
+const Reviews = require("../reviews/reviews.model");
   Offer = require("../offers/offers.model");
 
 const Controller = {
@@ -17,7 +18,6 @@ const Controller = {
         page            = req.query.page - 1,
         skip            = limit * page;
 
-    console.log(options);
     try {
       products = await Product.find(options).sort(filterOptions).limit(limit).skip(skip);
       count = await Product.count(options);
@@ -97,7 +97,6 @@ const Controller = {
 
   discount: async (req, res, next) => {
     const rate = req.params.rate;
-    console.log(rate);
     let discontbook;
     try {
       discontbook = await Product.find({ discountrate: rate / 100 }).limit(14);
@@ -105,6 +104,21 @@ const Controller = {
         success: true,
         code: 201,
         discontbook: discontbook,
+      });
+    } catch (err) {
+      return helpers.handleError(err, res);
+    }
+  },
+
+  delete: async (req, res, next) => {
+    const id = req.params.id;
+
+    try {
+      const deleted = await Product.deleteOne({_id: id});
+      return res.status(201).json({
+        success: true,
+        code: 201,
+        id: id,
       });
     } catch (err) {
       return helpers.handleError(err, res);

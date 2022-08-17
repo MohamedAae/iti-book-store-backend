@@ -8,5 +8,6 @@ router.get("/discount/:rate", controller.discount);
 router.get("/:id", controller.getById);
 router.post("/", controller.create);
 router.patch("/:id", controller.edit);
+router.delete("/:id", controller.delete)
 
 module.exports = router;

@@ -5,7 +5,7 @@ const helpers = require("../../helpers/api.js"),
 const Controller = {
   get: async (req, res, next) => {
     try {
-      const reviews = await Reviews.find();
+      const reviews = await Reviews.find().populate('bookId');
       return res.status(201).json({
         success: true,
         code: 201,
@@ -56,6 +56,21 @@ const Controller = {
         success: true,
         code: 201,
         review: saved,
+      });
+    } catch (err) {
+      return helpers.handleError(err, res);
+    }
+  },
+
+  delete: async (req, res, next) => {
+    const id = req.params.id;
+
+    try {
+      const deleted = await Reviews.deleteOne({_id: id});
+      return res.status(201).json({
+        success: true,
+        code: 201,
+        id: id,
       });
     } catch (err) {
       return helpers.handleError(err, res);

@@ -5,6 +5,7 @@ const express = require("express"),
 
 router.get("/", controller.get);
 router.post("/", jwt.auth, controller.create);
+router.delete("/:id", controller.delete)
 router.get("/:id", controller.getById);
 router.get("/user/:id", controller.getReviewsByUserId);
 

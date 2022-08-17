@@ -10,7 +10,6 @@ const auth = (req, res, next) => {
   const token = req.headers["x-access-token"];
   try {
     const decoded = jwt.verify(token, key);
-    console.log("youssef");
   } catch (err) {
     return helpers.handleError("Invalid token", res);
   }

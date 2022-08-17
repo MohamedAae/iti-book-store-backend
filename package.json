@@ -23,6 +23,7 @@
     "mongoose": "^6.5.0",
     "morgan": "^1.10.0",
     "nodemon": "^2.0.19",
-    "string-sanitizer": "^2.0.2"
+    "string-sanitizer": "^2.0.2",
+    "stripe": "^10.2.0"
   }
 }

@@ -22,8 +22,12 @@ const Controller = {
     create: async (req, res, next) => {
         const data = req.body;
         try {
-            const hashedPassword = await hashPassword(data.password);
+            const exist = await User.findOne({email: data.email});
+            if (exist) {
+                return helpers.handleError(`Email Already Exists.`, res);
+            }
 
+            const hashedPassword = await hashPassword(data.password);
             data.password = hashedPassword;
             const user = new User(data);
 
@@ -35,12 +39,16 @@ const Controller = {
                 user    : saved,
             });
         } catch (err) {
+            if (err.name === 'ValidationError') {
+                console.error(Object.values(err.errors).map(val => val.message))
+            } else {
+                console.error(err);
+            }
             return helpers.handleError(err, res);
         }
     },
 
     login: async (req, res, next) => {
-        console.log(req.body);
         const data              = req.body,
             { email, password } = data,
             token               = jwt.generateToken();
