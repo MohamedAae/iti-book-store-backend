@@ -19,6 +19,22 @@ const Controller = {
         }
     },
 
+    getPermissions: async (req, res, next) => {
+        const id = req.params.id;
+        console.log(req);
+        try {
+            const user = await User.findById({_id: id});
+            const isAdmin = user.isAdmin ? user.isAdmin : false;
+            return res.status(201).json({
+                success: true,
+                code: 201,
+                isAdmin,
+            });
+        } catch (err) {
+            return helpers.handleError(err, res);
+        }
+    },
+
     create: async (req, res, next) => {
         const data = req.body;
         try {
@@ -27,8 +43,7 @@ const Controller = {
                 return helpers.handleError(`Email Already Exists.`, res);
             }
 
-            if (data.password.length < 6) return helpers.handleError(`Password must be more than 5
-   characters.`, res);
+            if (data.password.length < 6) return helpers.handleError(`Password must be more than 5 characters.`, res);
 
             const hashedPassword = await hashPassword(data.password);
             data.password = hashedPassword;
@@ -55,20 +70,21 @@ const Controller = {
 
     login: async (req, res, next) => {
         const data              = req.body,
-            { email, password } = data,
-            token               = jwt.generateToken();
+            { email, password } = data;
+
 
         try {
             const currentUser = await User.findOne({ email: email });
             if (!currentUser) {
-                return helpers.handleError("user not exist", res);
+                return helpers.handleError("This email doesn't exist.", res);
             }
 
             const match = await bcrypt.compare(password, currentUser.password);
             if (!match) {
-                return helpers.handleError("err data login", res);
+                return helpers.handleError("Check your credentials.", res);
             }
 
+            const token = jwt.generateToken(currentUser._id, currentUser.isAdmin);
             currentUser.token       = token;
             currentUser.rememberMe  = data.rememberMe;
             return res.status(201).json({
@@ -80,6 +96,27 @@ const Controller = {
             return helpers.handleError(err, res);
         }
     },
+
+    checkIfExist: async (req, res, next) => {
+        try {
+            const currentUser = await User.findOne(req.body);
+            if (!currentUser) {
+                return res.status(201).json({
+                    success : true,
+                    code    : 201,
+                    exists    : false,
+                });
+            }
+
+            return res.status(201).json({
+                success : true,
+                code    : 201,
+                exists    : true,
+            });
+        } catch (err) {
+            return helpers.handleError(err, res);
+        }
+    }
 }
 
 const hashPassword = (plainPassword) => {

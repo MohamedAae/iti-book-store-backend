@@ -63,6 +63,23 @@ const Controller = {
         }
     },
 
+    edit: async (req, res, next) => {
+        const id = req.params.id,
+            update = req.body;
+
+        try {
+            const updated = await Order.findOneAndUpdate({ _id: id }, update, {new: true});
+            console.log(updated);
+            return res.status(201).json({
+                success: true,
+                code: 201,
+                order: updated,
+            });
+        } catch (err) {
+            return helpers.handleError(err, res);
+        }
+    },
+
     // getById: async (req, res, next) => {
     //     const id = req.params.id;
     //     try {
@@ -77,21 +94,7 @@ const Controller = {
     //     }
     // },
     //
-    // edit: async (req, res, next) => {
-    //     const id = req.params.id,
-    //         update = req.body;
-    //
-    //     try {
-    //         const updated = await Product.findOneAndUpdate({ _id: id }, update);
-    //         return res.status(201).json({
-    //             success: true,
-    //             code: 201,
-    //             product: updated,
-    //         });
-    //     } catch (err) {
-    //         return helpers.handleError(err, res);
-    //     }
-    // },
+
     //
     // fillter: async (req, res, next) => {
     //     let bestSellerBooks;

@@ -115,6 +115,7 @@ const Controller = {
 
     try {
       const deleted = await Product.deleteOne({_id: id});
+      const deletedReviews = await Reviews.deleteMany({bookId: id});
       return res.status(201).json({
         success: true,
         code: 201,
