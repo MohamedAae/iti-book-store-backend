@@ -27,6 +27,9 @@ const Controller = {
                 return helpers.handleError(`Email Already Exists.`, res);
             }
 
+            if (data.password.length < 6) return helpers.handleError(`Password must be more than 5
+   characters.`, res);
+
             const hashedPassword = await hashPassword(data.password);
             data.password = hashedPassword;
             const user = new User(data);
@@ -39,11 +42,13 @@ const Controller = {
                 user    : saved,
             });
         } catch (err) {
+            console.log(err);
             if (err.name === 'ValidationError') {
                 console.error(Object.values(err.errors).map(val => val.message))
             } else {
                 console.error(err);
             }
+            console.log(err);
             return helpers.handleError(err, res);
         }
     },

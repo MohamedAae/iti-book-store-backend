@@ -1,5 +1,6 @@
 require("dotenv").config();
 
+
 const express = require("express"), cors = require("cors"),
     mongoose = require("mongoose"), morgan = require("morgan"), app = express(),
     DB_URI = process.env.DB_URI, DB_USERNAME = process.env.DB_USERNAME,
@@ -13,7 +14,8 @@ const express = require("express"), cors = require("cors"),
     offersRouter = require("./api/offers"),
     searchRouter = require("./api/search"),
     reviewsRouter = require("./api/reviews"),
-    ordersRouter = require("./api/orders");
+    ordersRouter = require("./api/orders"),
+    mediaRouter = require("./api/media");
 
 mongoose.connect(ATLASURI, (err) => {
     if (!err) return console.log(`Connected to Atlas DB.`);
@@ -32,6 +34,7 @@ app.use("/offers", offersRouter);
 app.use("/search", searchRouter);
 app.use("/reviews", reviewsRouter);
 app.use("/orders", ordersRouter);
+app.use("/media", mediaRouter);
 
 app.listen(PORT, HOST, () => {
     console.log(`Server is running on port ${PORT}`);
